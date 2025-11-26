@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeonFlow - Ultra-Modern To-Do App</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+</head>
+<body class="neon-body">
+    <!-- Custom Cursor -->
+    <div class="neon-cursor"></div>
+    
+    <!-- Sidebar Navigation -->
+    <aside id="sidebar" class="glass-sidebar">
+        <div class="sidebar-header">
+            <h1 class="neon-title">NeonFlow</h1>
+            <button id="sidebarToggle" class="sidebar-toggle">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+        
+        <nav class="sidebar-nav">
+            <a href="#" data-view="landing" class="nav-item active">
+                <i class="fas fa-home"></i>
+                <span>Home</span>
+            </a>
+            <a href="#" data-view="tasks" class="nav-item">
+                <i class="fas fa-tasks"></i>
+                <span>Tasks</span>
+            </a>
+            <a href="#" data-view="kanban" class="nav-item">
+                <i class="fas fa-columns"></i>
+                <span>Kanban</span>
+            </a>
+            <a href="#" data-view="calendar" class="nav-item">
+                <i class="fas fa-calendar-alt"></i>
+                <span>Calendar</span>
+            </a>
+            <a href="#" data-view="pomodoro" class="nav-item">
+                <i class="fas fa-clock"></i>
+                <span>Focus Timer</span>
+            </a>
+            <a href="#" data-view="analytics" class="nav-item">
+                <i class="fas fa-chart-line"></i>
+                <span>Analytics</span>
+            </a>
+            <a href="#" data-view="settings" class="nav-item">
+                <i class="fas fa-cog"></i>
+                <span>Settings</span>
+            </a>
+        </nav>
+        
+        <div class="sidebar-footer">
+            <div class="user-stats">
+                <div class="stat-item">
+                    <span class="stat-label">Level</span>
+                    <span id="userLevel" class="stat-value">1</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">XP</span>
+                    <span id="userXP" class="stat-value">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Streak</span>
+                    <span id="userStreak" class="stat-value">0</span>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main id="mainContent" class="main-content">
+        <!-- Header -->
+        <header class="glass-header">
+            <div class="header-left">
+                <h2 id="currentViewTitle" class="view-title">Welcome to NeonFlow</h2>
+                <p id="currentDate" class="view-subtitle"></p>
+            </div>
+            <div class="header-actions">
+                <button id="searchBtn" class="icon-btn" title="Search">
+                    <i class="fas fa-search"></i>
+                </button>
+                <button id="filterBtn" class="icon-btn" title="Filters">
+                    <i class="fas fa-filter"></i>
+                </button>
+                <button id="themeToggle" class="icon-btn" title="Toggle Theme">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Search Bar -->
+        <div id="searchBar" class="search-container hidden">
+            <input type="text" id="searchInput" class="search-input" placeholder="Search tasks...">
+            <button id="closeSearch" class="close-btn">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <!-- Filter Panel -->
+        <div id="filterPanel" class="filter-panel hidden">
+            <div class="filter-group">
+                <label>Sort By</label>
+                <select id="sortSelect" class="filter-select">
+                    <option value="date">Date Added</option>
+                    <option value="priority">Priority</option>
+                    <option value="name">Name</option>
+                    <option value="dueDate">Due Date</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Filter By Status</label>
+                <select id="statusFilter" class="filter-select">
+                    <option value="all">All</option>
+                    <option value="active">Active</option>
+                    <option value="completed">Completed</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Filter By Priority</label>
+                <select id="priorityFilter" class="filter-select">
+                    <option value="all">All</option>
+                    <option value="high">High</option>
+                    <option value="medium">Medium</option>
+                    <option value="low">Low</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Filter By Category</label>
+                <select id="categoryFilter" class="filter-select">
+                    <option value="all">All Categories</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Views Container -->
+        <div id="viewsContainer" class="views-container">
+            <!-- Landing Page View -->
+            <div id="landingView" class="view landing-view active">
+                <div class="landing-container">
+                    <div class="landing-hero">
+                        <div class="landing-logo">
+                            <div class="logo-glow"></div>
+                            <h1 class="landing-title">NeonFlow</h1>
+                            <p class="landing-subtitle">Ultra-Modern Productivity</p>
+                        </div>
+                        <div class="landing-description">
+                            <p>Transform your workflow with AI-powered task management, beautiful design, and productivity insights.</p>
+                        </div>
+                        <button id="getStartedBtn" class="landing-cta">
+                            <span>Get Started</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+
+                    <div class="landing-features">
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <i class="fas fa-robot"></i>
+                            </div>
+                            <h3>AI-Powered</h3>
+                            <p>Voice commands, text-to-task conversion, and smart task breaking</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <i class="fas fa-palette"></i>
+                            </div>
+                            <h3>5 Beautiful Themes</h3>
+                            <p>Cyberpunk, Minimal, Anime, Terminal, and Pastel aesthetics</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <h3>Analytics Dashboard</h3>
+                            <p>Track productivity with heatmaps, charts, and insights</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <h3>Pomodoro Timer</h3>
+                            <p>Focus sessions with ambient sounds and progress tracking</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <i class="fas fa-trophy"></i>
+                            </div>
+                            <h3>Gamification</h3>
+                            <p>Earn XP, level up, and maintain productivity streaks</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <i class="fas fa-mobile-alt"></i>
+                            </div>
+                            <h3>Fully Responsive</h3>
+                            <p>Works perfectly on desktop, tablet, and mobile devices</p>
+                        </div>
+                    </div>
+
+                    <div class="landing-stats">
+                        <div class="stat-card-landing">
+                            <div class="stat-number">∞</div>
+                            <div class="stat-label">Tasks Unlimited</div>
+                        </div>
+                        <div class="stat-card-landing">
+                            <div class="stat-number">5</div>
+                            <div class="stat-label">Beautiful Themes</div>
+                        </div>
+                        <div class="stat-card-landing">
+                            <div class="stat-number">100%</div>
+                            <div class="stat-label">Free Forever</div>
+                        </div>
+                    </div>
+
+                    <div class="landing-cta-footer">
+                        <p>Ready to boost your productivity?</p>
+                        <button id="getStartedBtn2" class="landing-cta secondary">
+                            <span>Start Organizing</span>
+                            <i class="fas fa-rocket"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tasks View -->
+            <div id="tasksView" class="view">
+                <div id="tasksList" class="tasks-list"></div>
+                <div id="emptyState" class="empty-state hidden">
+                    <i class="fas fa-tasks empty-icon"></i>
+                    <p>No tasks yet. Add one to get started!</p>
+                </div>
+            </div>
+
+            <!-- Kanban View -->
+            <div id="kanbanView" class="view">
+                <div class="kanban-board">
+                    <div class="kanban-column" data-status="todo">
+                        <div class="kanban-header">
+                            <h3>To Do</h3>
+                            <span class="kanban-count" id="todoCount">0</span>
+                        </div>
+                        <div class="kanban-list" id="kanbanTodo"></div>
+                    </div>
+                    <div class="kanban-column" data-status="in-progress">
+                        <div class="kanban-header">
+                            <h3>In Progress</h3>
+                            <span class="kanban-count" id="inProgressCount">0</span>
+                        </div>
+                        <div class="kanban-list" id="kanbanInProgress"></div>
+                    </div>
+                    <div class="kanban-column" data-status="completed">
+                        <div class="kanban-header">
+                            <h3>Completed</h3>
+                            <span class="kanban-count" id="completedCount">0</span>
+                        </div>
+                        <div class="kanban-list" id="kanbanCompleted"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Calendar View -->
+            <div id="calendarView" class="view">
+                <div class="calendar-container">
+                    <div class="calendar-header">
+                        <button id="prevMonth" class="calendar-nav">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <h3 id="calendarMonth"></h3>
+                        <button id="nextMonth" class="calendar-nav">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                    <div id="calendarGrid" class="calendar-grid"></div>
+                </div>
+            </div>
+
+            <!-- Pomodoro View -->
+            <div id="pomodoroView" class="view">
+                <div class="pomodoro-container">
+                    <div class="pomodoro-timer">
+                        <div class="timer-circle">
+                            <svg class="timer-svg">
+                                <circle class="timer-bg" cx="150" cy="150" r="140"></circle>
+                                <circle id="timerProgress" class="timer-progress" cx="150" cy="150" r="140"></circle>
+                            </svg>
+                            <div class="timer-content">
+                                <div id="timerDisplay" class="timer-display">25:00</div>
+                                <div id="timerLabel" class="timer-label">Focus Time</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="pomodoro-controls">
+                        <button id="timerStart" class="timer-btn">
+                            <i class="fas fa-play"></i>
+                        </button>
+                        <button id="timerPause" class="timer-btn">
+                            <i class="fas fa-pause"></i>
+                        </button>
+                        <button id="timerReset" class="timer-btn">
+                            <i class="fas fa-redo"></i>
+                        </button>
+                    </div>
+                    <div class="pomodoro-settings">
+                        <div class="timer-preset">
+                            <button data-minutes="25" class="preset-btn active">25 min</button>
+                            <button data-minutes="15" class="preset-btn">15 min</button>
+                            <button data-minutes="45" class="preset-btn">45 min</button>
+                            <button data-minutes="60" class="preset-btn">60 min</button>
+                        </div>
+                        <div class="sound-options">
+                            <label>Ambient Sound</label>
+                            <select id="ambientSound" class="sound-select">
+                                <option value="none">None</option>
+                                <option value="rain">Rain</option>
+                                <option value="forest">Forest</option>
+                                <option value="ocean">Ocean</option>
+                                <option value="cafe">Cafe</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div id="motivationalQuote" class="motivational-quote"></div>
+                </div>
+            </div>
+
+            <!-- Analytics View -->
+            <div id="analyticsView" class="view">
+                <div class="analytics-grid">
+                    <div class="analytics-card">
+                        <h3>Weekly Heatmap</h3>
+                        <canvas id="heatmapChart"></canvas>
+                    </div>
+                    <div class="analytics-card">
+                        <h3>Task Distribution</h3>
+                        <canvas id="radialChart"></canvas>
+                    </div>
+                    <div class="analytics-card">
+                        <h3>Productivity Stats</h3>
+                        <div id="productivityStats" class="stats-grid"></div>
+                    </div>
+                    <div class="analytics-card">
+                        <h3>Completion Rate</h3>
+                        <canvas id="completionChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings View -->
+            <div id="settingsView" class="view">
+                <div class="settings-container">
+                    <div class="settings-section">
+                        <h3>Theme</h3>
+                        <div class="theme-selector">
+                            <button data-theme="cyberpunk" class="theme-btn active">
+                                <div class="theme-preview cyberpunk"></div>
+                                <span>Cyberpunk</span>
+                            </button>
+                            <button data-theme="minimal" class="theme-btn">
+                                <div class="theme-preview minimal"></div>
+                                <span>Minimal White</span>
+                            </button>
+                            <button data-theme="anime" class="theme-btn">
+                                <div class="theme-preview anime"></div>
+                                <span>Anime Aesthetic</span>
+                            </button>
+                            <button data-theme="terminal" class="theme-btn">
+                                <div class="theme-preview terminal"></div>
+                                <span>Terminal Hacker</span>
+                            </button>
+                            <button data-theme="pastel" class="theme-btn">
+                                <div class="theme-preview pastel"></div>
+                                <span>Pastel Soft UI</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="settings-section">
+                        <h3>Wallpaper</h3>
+                        <input type="file" id="wallpaperInput" accept="image/*" class="file-input">
+                        <button id="removeWallpaper" class="btn-secondary">Remove Wallpaper</button>
+                    </div>
+                    <div class="settings-section">
+                        <h3>Notifications</h3>
+                        <label class="toggle-label">
+                            <input type="checkbox" id="notificationsEnabled" class="toggle-input">
+                            <span class="toggle-slider"></span>
+                            Enable Push Notifications
+                        </label>
+                        <label class="toggle-label">
+                            <input type="checkbox" id="soundEffectsEnabled" class="toggle-input" checked>
+                            <span class="toggle-slider"></span>
+                            Sound Effects
+                        </label>
+                    </div>
+                    <div class="settings-section">
+                        <h3>Cloud Sync</h3>
+                        <button id="enableCloudSync" class="btn-primary">Enable Cloud Sync</button>
+                        <p class="settings-note">Connect to cloud storage for backup and sync across devices</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Floating Add Button -->
+    <button id="addTaskBtn" class="floating-add-btn">
+        <i class="fas fa-plus"></i>
+    </button>
+
+    <!-- Task Modal -->
+    <div id="taskModal" class="modal hidden">
+        <div class="modal-content glass-modal">
+            <div class="modal-header">
+                <h3 id="modalTitle">Add New Task</h3>
+                <button id="closeModal" class="close-btn">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Task Name</label>
+                    <input type="text" id="taskName" class="form-input" placeholder="Enter task name...">
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea id="taskDescription" class="form-textarea" placeholder="Add description..."></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Priority</label>
+                        <select id="taskPriority" class="form-select">
+                            <option value="low">Low</option>
+                            <option value="medium" selected>Medium</option>
+                            <option value="high">High</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Category</label>
+                        <input type="text" id="taskCategory" class="form-input" placeholder="Work, Personal, etc.">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Due Date</label>
+                        <input type="datetime-local" id="taskDueDate" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label>Estimated Time</label>
+                        <input type="number" id="taskEstimatedTime" class="form-input" placeholder="Minutes">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="taskHasSubtasks">
+                        Break into subtasks (AI-powered)
+                    </label>
+                </div>
+                <div id="subtasksContainer" class="subtasks-container hidden">
+                    <label>Subtasks</label>
+                    <div id="subtasksList"></div>
+                    <button id="addSubtask" class="btn-secondary">+ Add Subtask</button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="saveTask" class="btn-primary">Save Task</button>
+                <button id="cancelTask" class="btn-secondary">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Assistant Modal -->
+    <div id="aiModal" class="modal hidden">
+        <div class="modal-content glass-modal">
+            <div class="modal-header">
+                <h3>AI Assistant</h3>
+                <button id="closeAIModal" class="close-btn">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="ai-tabs">
+                    <button data-ai="voice" class="ai-tab active">
+                        <i class="fas fa-microphone"></i> Voice Input
+                    </button>
+                    <button data-ai="text" class="ai-tab">
+                        <i class="fas fa-keyboard"></i> Text to Task
+                    </button>
+                    <button data-ai="breaker" class="ai-tab">
+                        <i class="fas fa-sitemap"></i> Task Breaker
+                    </button>
+                </div>
+                <div id="aiVoicePanel" class="ai-panel active">
+                    <button id="startVoiceRecognition" class="voice-btn">
+                        <i class="fas fa-microphone"></i>
+                        <span>Start Recording</span>
+                    </button>
+                    <div id="voiceStatus" class="voice-status"></div>
+                </div>
+                <div id="aiTextPanel" class="ai-panel">
+                    <textarea id="aiTextInput" class="form-textarea" placeholder="Type naturally: 'I need to finish the project report by Friday and schedule a meeting with the team...'"></textarea>
+                    <button id="processText" class="btn-primary">Convert to Tasks</button>
+                </div>
+                <div id="aiBreakerPanel" class="ai-panel">
+                    <textarea id="breakerInput" class="form-textarea" placeholder="Enter a big task: 'Launch new product website'"></textarea>
+                    <button id="breakTask" class="btn-primary">Break into Steps</button>
+                    <div id="breakerResults" class="breaker-results"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Container -->
+    <div id="notificationContainer" class="notification-container"></div>
+
+    <!-- Scripts -->
+    <script src="script.js"></script>
+</body>
+</html>
+
