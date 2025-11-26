@@ -244,18 +244,6 @@ function playSound(type) {
 - Try refreshing the page
 - Check browser compatibility
 
-## 🎯 Future Enhancements
-
-- [ ] Full cloud sync implementation
-- [ ] User accounts and authentication
-- [ ] Team collaboration features
-- [ ] Mobile app (PWA)
-- [ ] More AI features (smart scheduling, task suggestions)
-- [ ] Export to PDF/CSV
-- [ ] Integration with calendar apps
-- [ ] More themes and customization options
-- [ ] Task templates
-- [ ] Recurring tasks
 
 ## 📝 License
 
@@ -273,7 +261,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 For issues, questions, or contributions:
 - Open an issue on GitHub
-- Contact: [your-email@example.com]
+- Contact: [sohail786akh@gmail.com]
 
 ## 🌟 Contributing
 
@@ -287,7 +275,7 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ---
 
-**Made with ❤️ and lots of ☕**
+**Made with ❤️ by Sohail and lots of ☕**
 
 Enjoy your ultra-modern to-do experience! 🚀
 
