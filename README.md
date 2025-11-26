@@ -278,5 +278,3 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 **Made with ❤️ by Sohail and lots of ☕**
 
 Enjoy your ultra-modern to-do experience! 🚀
-
-# NeonFLow
