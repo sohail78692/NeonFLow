@@ -260,7 +260,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 ## 💬 Support
 
 For issues, questions, or contributions:
-- Open an issue on GitHub
+- Open an issue on GitHub.
 - Contact: [sohail786akh@gmail.com]
 
 ## 🌟 Contributing
